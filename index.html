@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我们的故事 · Our Story</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+<style>
+:root {
+  --deep: #0a1628; --navy: #0d2045; --ocean: #1a3a6b; --blue: #2563b8;
+  --sky: #4a9ede; --mist: #8ec5f0; --foam: #c8e6f8; --pearl: #e8f4fd;
+  --white: #f5faff; --gold: #d4a853; --gold-light: #f0c97a;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--deep); color: var(--white);
+  font-family: 'Noto Serif SC', serif; min-height: 100vh; overflow-x: hidden;
+}
+
+/* 星空 */
+.stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+.star {
+  position: absolute; border-radius: 50%; background: white;
+  animation: twinkle var(--dur) ease-in-out infinite; opacity: 0;
+}
+@keyframes twinkle {
+  0%,100% { opacity:0; transform:scale(0.8); }
+  50% { opacity:var(--op); transform:scale(1); }
+}
+
+/* 极光 */
+.aurora { position: fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+.aurora::before {
+  content:''; position:absolute; width:120%; height:60%; top:-20%; left:-10%;
+  background: radial-gradient(ellipse at 30% 50%, rgba(37,99,184,0.18) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 40%, rgba(26,58,107,0.22) 0%, transparent 55%),
+              radial-gradient(ellipse at 50% 80%, rgba(74,158,222,0.1) 0%, transparent 50%);
+  animation: aurora-move 12s ease-in-out infinite alternate;
+}
+@keyframes aurora-move {
+  0% { transform:translateX(0) scaleY(1); }
+  100% { transform:translateX(3%) scaleY(1.1); }
+}
+
+/* 提示 */
+.toast {
+  position:fixed; bottom:32px; left:50%; transform:translateX(-50%) translateY(80px);
+  background:rgba(13,32,69,0.95); border:1px solid rgba(74,158,222,0.3);
+  color:var(--foam); padding:14px 28px; font-size:0.85rem; border-radius:6px;
+  z-index:9999; transition:0.4s; pointer-events:none; backdrop-filter:blur(6px);
+}
+.toast.show { transform:translateX(-50%) translateY(0); }
+
+/* 密码锁 */
+.lock-screen {
+  position:fixed; inset:0; z-index:99999; background:var(--deep);
+  display:flex; align-items:center; justify-content:center; padding:20px;
+}
+.lock-box {
+  background:linear-gradient(135deg,var(--navy),var(--deep));
+  border:1px solid rgba(74,158,222,0.2); padding:40px; width:100%; max-width:400px;
+  border-radius:8px; text-align:center;
+}
+.lock-box h2 { margin-bottom:24px; color:var(--foam); }
+.lock-input {
+  width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(74,158,222,0.3);
+  padding:14px 18px; color:var(--white); font-size:1rem; border-radius:6px; margin-bottom:20px;
+  outline:none; text-align:center;
+}
+.lock-btn {
+  width:100%; padding:14px; background:linear-gradient(135deg,var(--blue),var(--ocean));
+  border:none; color:white; font-size:1rem; border-radius:6px; cursor:pointer;
+}
+
+/* 导航 */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  padding:18px 24px; display:flex; justify-content:space-between; align-items:center;
+  background:linear-gradient(to bottom,rgba(10,22,40,0.95),transparent);
+  backdrop-filter:blur(6px);
+}
+.nav-brand { font-family:'Playfair Display',serif; font-style:italic; color:var(--mist); }
+.nav-links { display:flex; gap:20px; list-style:none; }
+.nav-links a { color:var(--foam); text-decoration:none; font-size:0.85rem; opacity:0.8; }
+.nav-links a:hover { color:var(--sky); opacity:1; }
+
+/* 主页 */
+.hero {
+  position:relative; z-index:1; min-height:100vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:0 20px;
+}
+.hero-date { font-size:0.8rem; letter-spacing:0.2em; color:var(--sky); margin-bottom:20px; }
+.hero-title { font-family:'Playfair Display',serif; font-size:clamp(2.5rem,8vw,5rem); color:var(--white); margin-bottom:16px; }
+.hero-title em { color:var(--sky); font-style:italic; }
+.hero-subtitle { font-family:'Ma Shan Zheng',cursive; font-size:clamp(1.2rem,3vw,1.6rem); color:var(--mist); margin-bottom:32px; }
+.counter { display:flex; gap:16px; margin-bottom:40px; }
+.counter .item { text-align:center; }
+.counter .num { font-size:2rem; color:var(--gold-light); font-weight:bold; }
+.counter .label { font-size:0.7rem; color:var(--mist); }
+
+/* 模块 */
+section { max-width:1000px; margin:0 auto; padding:80px 20px; position:relative; z-index:1; }
+.section-title { font-family:'Playfair Display',serif; font-size:2rem; margin-bottom:30px; color:var(--white); text-align:center; }
+.card {
+  background:linear-gradient(135deg,rgba(13,32,69,0.8),rgba(10,22,40,0.9));
+  border:1px solid rgba(74,158,220,0.15); border-radius:8px; padding:24px; margin-bottom:20px;
+}
+.btn {
+  padding:10px 20px; background:transparent; border:1px solid var(--blue); color:var(--sky);
+  border-radius:6px; cursor:pointer; transition:0.3s;
+}
+.btn:hover { background:rgba(37,99,184,0.1); }
+
+/* 聊天 */
+.chat-box { height:300px; overflow-y:auto; margin-bottom:16px; padding:10px; }
+.chat-me, .chat-you {
+  max-width:70%; padding:10px 14px; border-radius:12px; margin-bottom:10px;
+}
+.chat-me { background:var(--blue); color:white; margin-left:auto; }
+.chat-you { background:rgba(74,158,222,0.2); color:var(--foam); }
+.chat-input { display:flex; gap:10px; }
+.chat-input input { flex:1; padding:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(74,158,222,0.3); color:white; border-radius:6px; }
+
+/* 便签 */
+.note-textarea { width:100%; height:120px; padding:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(74,158,222,0.3); color:white; border-radius:6px; }
+
+/* 网格 */
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
+.gallery img { width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; cursor:pointer; }
+
+/* 灯箱 */
+.lightbox { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:9999; align-items:center; justify-content:center; }
+.lightbox.active { display:flex; }
+.lightbox img { max-width:90vw; max-height:80vh; }
+.lightbox .close { position:absolute; top:20px; right:20px; color:white; font-size:2rem; cursor:pointer; }
+
+/* 隐藏 */
+.hidden { display:none !important; }
+</style>
+</head>
+<body>
+
+<!-- 密码锁 -->
+<div class="lock-screen" id="lock">
+  <div class="lock-box">
+    <h2>输入密码进入我们的小世界</h2>
+    <input type="password" class="lock-input" id="lockInput" placeholder="请输入密码">
+    <button class="lock-btn" onclick="unlock()">进入</button>
+  </div>
+</div>
+
+<div class="stars"></div>
+<div class="aurora"></div>
+<div class="toast" id="toast"></div>
+
+<!-- 导航 -->
+<nav>
+  <div class="nav-brand">我们 · Our Story</div>
+  <ul class="nav-links">
+    <li><a href="#home">首页</a></li>
+    <li><a href="#diary">日记</a></li>
+    <li><a href="#album">相册</a></li>
+    <li><a href="#milestone">纪念</a></li>
+    <li><a href="#chat">聊天</a></li>
+    <li><a href="#note">便签</a></li>
+  </ul>
+</nav>
+
+<!-- 首页 -->
+<section id="home" class="hero">
+  <div class="hero-date">2025 · 01 · 22</div>
+  <h1 class="hero-title">我和<em>你</em></h1>
+  <p class="hero-subtitle">往后余生，皆是我们</p>
+  <div class="counter">
+    <div class="item"><div class="num" id="day">0</div><div class="label">天</div></div>
+    <div class="item"><div class="num" id="hour">00</div><div class="label">时</div></div>
+    <div class="item"><div class="num" id="min">00</div><div class="label">分</div></div>
+  </div>
+  <div class="card" style="text-align:center;">
+    <p>你们相距：<span id="distance">计算中...</span></p>
+    <p>当前天气：<span id="weather">获取中...</span></p>
+  </div>
+</section>
+
+<!-- 日记 -->
+<section id="diary">
+  <h2 class="section-title">日常日记</h2>
+  <button class="btn" onclick="openDiary()">写日记</button>
+  <div class="grid" id="diaryList"></div>
+</section>
+
+<!-- 相册 -->
+<section id="album">
+  <h2 class="section-title">我们的相册</h2>
+  <button class="btn" onclick="addPhoto()">上传照片</button>
+  <div class="grid gallery" id="photoList"></div>
+</section>
+
+<!-- 纪念日 -->
+<section id="milestone">
+  <h2 class="section-title">重要纪念日</h2>
+  <button class="btn" onclick="addMilestone()">添加纪念</button>
+  <div id="milestoneList"></div>
+</section>
+
+<!-- 聊天 -->
+<section id="chat">
+  <h2 class="section-title">悄悄话</h2>
+  <div class="card">
+    <div class="chat-box" id="chatBox"></div>
+    <div class="chat-input">
+      <input id="msgInput" placeholder="说点什么...">
+      <button class="btn" onclick="sendMsg()">发送</button>
+    </div>
+  </div>
+</section>
+
+<!-- 便签 -->
+<section id="note">
+  <h2 class="section-title">我们的便签</h2>
+  <div class="card">
+    <textarea class="note-textarea" id="noteText" oninput="saveNote()"></textarea>
+  </div>
+</section>
+
+<!-- 灯箱 -->
+<div class="lightbox" id="lightbox">
+  <span class="close" onclick="closeLightbox()">×</span>
+  <img id="lightImg">
+</div>
+
+<script>
+// ==============================================
+// 配置区（你只改这里）
+// ==============================================
+const PASSWORD = "250122";         // 进入密码
+const LOVER_START = "2025-01-22";   // 相恋日
+const MY_NAME = "我";               // 你的名字
+const HER_NAME = "宝贝";            // 她的名字
+
+// ==============================================
+// 密码解锁
+// ==============================================
+function unlock() {
+  const v = document.getElementById("lockInput").value;
+  if (v === PASSWORD) {
+    document.getElementById("lock").classList.add("hidden");
+    toast("欢迎回来 ❤️");
+    startAll();
+  } else {
+    toast("密码不正确");
+  }
+}
+
+// ==============================================
+// 本地存储
+// ==============================================
+const KEY = "our_love_data";
+function getData() {
+  return JSON.parse(localStorage.getItem(KEY)) || {
+    diaries:[], photos:[], milestones:[], chats:[], note:""
+  };
+}
+function saveData(d) {
+  localStorage.setItem(KEY, JSON.stringify(d));
+  refreshAll();
+}
+
+// ==============================================
+// 倒计时
+// ==============================================
+function count() {
+  const s = new Date(LOVER_START);
+  const now = new Date();
+  const diff = now - s;
+  const day = Math.floor(diff / 86400000);
+  const h = String(Math.floor((diff % 86400000) / 3600000)).padStart(2,0);
+  const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2,0);
+  document.getElementById("day").innerText = day;
+  document.getElementById("hour").innerText = h;
+  document.getElementById("min").innerText = m;
+}
+
+// ==============================================
+// 距离计算
+// ==============================================
+function getDistance() {
+  if (!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(pos => {
+    document.getElementById("distance").innerText = "已同步位置（仅本地）";
+  });
+}
+
+// ==============================================
+// 天气
+// ==============================================
+async function getWeather() {
+  try {
+    const r = await fetch("https://api.weatherapi.com/v1/current.json?key=e69f9c1ab3514997a6462924252704&q=auto:ip");
+    const d = await r.json();
+    document.getElementById("weather").innerText = d.current.temp_c + "℃ · " + d.current.condition.text;
+  } catch(e) {}
+}
+
+// ==============================================
+// 聊天
+// ==============================================
+function sendMsg() {
+  const i = document.getElementById("msgInput");
+  const t = i.value.trim();
+  if (!t) return;
+  const d = getData();
+  d.chats.push({text:t,me:true,time:new Date().toLocaleString()});
+  saveData(d);
+  i.value = "";
+}
+
+// ==============================================
+// 便签
+// ==============================================
+function saveNote() {
+  const d = getData();
+  d.note = document.getElementById("noteText").value;
+  saveData(d);
+}
+
+// ==============================================
+// 照片
+// ==============================================
+function addPhoto() {
+  const i = document.createElement("input");
+  i.type = "file";
+  i.accept = "image/*";
+  i.onchange = async e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const url = await toBase64(f);
+    const d = getData();
+    d.photos.push(url);
+    saveData(d);
+    toast("上传成功");
+  };
+  i.click();
+}
+
+// ==============================================
+// 工具
+// ==============================================
+function toast(m) {
+  const t = document.getElementById("toast");
+  t.innerText = m;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),2000);
+}
+function toBase64(f) {
+  return new Promise(r=>{const rdr=new FileReader();rdr.onloadend=()=>r(rdr.result);rdr.readAsDataURL(f);})
+}
+function openLightbox(s){document.getElementById("lightImg").src=s;document.getElementById("lightbox").classList.add("active");}
+function closeLightbox(){document.getElementById("lightbox").classList.remove("active");}
+
+// ==============================================
+// 刷新所有页面
+// ==============================================
+function refreshAll() {
+  const d = getData();
+  // 聊天
+  const cb = document.getElementById("chatBox");
+  cb.innerHTML = d.chats.map(c=>`
+    <div class="${c.me?'chat-me':'chat-you'}">${c.text}</div>
+  `).join("");
+  cb.scrollTop = cb.scrollHeight;
+  // 便签
+  document.getElementById("noteText").value = d.note;
+  // 相册
+  document.getElementById("photoList").innerHTML = d.photos.map(p=>`
+    <img src="${p}" onclick="openLightbox('${p}')">
+  `).join("");
+}
+
+// ==============================================
+// 启动
+// ==============================================
+function startAll() {
+  count();
+  setInterval(count,1000);
+  getDistance();
+  getWeather();
+  refreshAll();
+}
+
+// 星星
+(function(){
+  const c = document.querySelector(".stars");
+  for(let i=0;i<150;i++){
+    const e=document.createElement("div");
+    e.className="star";
+    const s=Math.random()*2+0.5;
+    e.style.width=s+"px";
+    e.style.height=s+"px";
+    e.style.left=Math.random()*100+"%";
+    e.style.top=Math.random()*100+"%";
+    e.style.setProperty("--dur",(3+Math.random()*4)+"s");
+    e.style.setProperty("--op",0.2+Math.random()*0.8);
+    c.appendChild(e);
+  }
+})();
+</script>
+</body>
+</html>
